@@ -5,8 +5,6 @@
 This small project shows how to use Spring Boot, Spring Web Flux, MongoDB and GridFS to implement a simple web-service
 for file uploads and downloads.
 
-This example does *not* deal with GridFS buckets.
-
 ## Running the application
 
 This is a standard Spring Boot application, the main class is `ReactiveGridFSApplication`.
@@ -15,6 +13,19 @@ Simply run that class inside your IDE, or from the command-line use `mvn spring-
 
 The defaults for MongoDB are used, assuming a non-authenticated database running on localhost:27017. This can be changed
 in `src/main/application.properties`.
+
+## GridFS buckets
+
+This application uses a GridFS bucket with a name configured in `src/main/application.properties`.
+
+The default bucket may be fine for some use-cases, in which case behind the scenes a collection named "fs" is used for
+the bucket.
+
+If an application needed multiple buckets, then a separate `ReactiveGridFsTemplate` bean is needed for each bucket - the
+`@Bean` annotation can take a name, which is then referenced when auto-wiring the components using an `@Qualifier`
+annotation with the same name.
+
+See the `GridFsConfig` class.
 
 ## Testing the endpoints
 

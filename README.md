@@ -27,6 +27,14 @@ annotation with the same name.
 
 See the `GridFsConfig` class.
 
+## Metadata
+
+GridFS allows for the storage of metadata associated with the file. Some details such as the upload data, file size and
+so on are provided for by default.
+
+It is possible to associate application-specific metadata with the stored files, this example does *not* currently
+demonstrate that.
+
 ## Testing the endpoints
 
 The examples shown here use [HTTPie](https://httpie.org/).

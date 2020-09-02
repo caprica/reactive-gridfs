@@ -1,6 +1,7 @@
-package uk.co.caprica.reactive.gridfs.files;
+package uk.co.caprica.reactive.gridfs.files.domain;
 
 import lombok.Value;
+import uk.co.caprica.reactive.gridfs.files.domain.FileMetadata;
 
 import java.util.Date;
 
@@ -10,4 +11,5 @@ public class FileInfo {
     String filename;
     long length;
     Date uploadDate;
+    FileMetadata metadata;
 }

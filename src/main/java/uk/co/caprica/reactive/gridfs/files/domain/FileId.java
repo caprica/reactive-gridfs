@@ -1,4 +1,4 @@
-package uk.co.caprica.reactive.gridfs.files;
+package uk.co.caprica.reactive.gridfs.files.domain;
 
 import lombok.Value;
 

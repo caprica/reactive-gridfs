@@ -2,8 +2,11 @@ package uk.co.caprica.reactive.gridfs.files;
 
 import org.bson.types.ObjectId;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.lang.Nullable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import uk.co.caprica.reactive.gridfs.files.domain.FileInfo;
+import uk.co.caprica.reactive.gridfs.files.domain.FileMetadata;
 
 /**
  * Specification for the "Files" component.
@@ -24,12 +27,14 @@ public interface Files {
 
         Flux<FileInfo> all();
 
-        Mono<ObjectId> store(Flux<DataBuffer> buffer, String filename);
+        Mono<ObjectId> store(@Nullable FileMetadata metadata, Flux<DataBuffer> buffer, String filename);
 
         Mono<Void> deleteAll();
 
         Flux<DataBuffer> fetch(String id);
 
         Mono<Void> delete(String id);
+
+        Mono<FileMetadata> metadata(String id);
     }
 }

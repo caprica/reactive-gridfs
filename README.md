@@ -32,8 +32,8 @@ See the `GridFsConfig` class.
 GridFS allows for the storage of metadata associated with the file. Some details such as the upload data, file size and
 so on are provided for by default.
 
-It is possible to associate application-specific metadata with the stored files, this example does *not* currently
-demonstrate that.
+It is possible to associate application-specific metadata with the stored files, this example implements the optional
+supply of such metadata.
 
 ## Testing the endpoints
 
@@ -43,15 +43,6 @@ The examples shown here use [HTTPie](https://httpie.org/).
 
 ```
 http -f POST :8080/file file@./some-cool-synthwave-track.mp3
-```
-
-Note here that "file" in `file@/...` matches the name declared in the `@RequestPart("file")` controller annotation:
-
-```
-@PostMapping
-public Mono<FileId> store(@RequestPart("file") Mono<FilePart> filePart) {
-    ...
-}
 ```
 
 The response contains the id for the newly uploaded file:
@@ -64,6 +55,25 @@ Content-Type: application/json
     "id": "5f4aa7325e33b541d30a69c4"
 }
 ```
+
+With optional JSON metadata:
+
+```
+http -f POST :8080/file file@./some-cool-synthwave-track.mp3 data@./some-metadata.json
+```
+
+Note here that "data" in `data@...` and "file" in `file@...` match the values declared in the `@RequestPart` controller
+annotations:
+
+```
+@PostMapping
+public Mono<FileId> store(@RequestPart(value="data", required=false) FileMetadata metadata, @RequestPart("file") Mono<FilePart> filePart) {
+    ...
+}
+```
+
+Here the metadata is optional whereas the upload file itself is mandatory, and this is why those annotations have
+different forms.
 
 ### GET all files
 
@@ -84,6 +94,15 @@ transfer-encoding: chunked
         "id": "5f4aa7325e33b541d30a69c4",
         "length": 10697101,
         "uploadDate": "2020-08-29T19:06:26.283+00:00"
+    },
+    {
+        "filename": "another-cool-synthwave-track.mp3",
+        "id": "5f4f4360224725129b139eb0",
+        "length": 14322462,
+        "metadata": {
+            "owner": "Neon Nox"
+        },
+        "uploadDate": "2020-08-29T19:16:52.881+00:00"
     }
 ]
 ```
@@ -118,6 +137,24 @@ Content-Type: application/json
     "requestId": "6dd721c6-27",
     "status": 404,
     "timestamp": "2020-08-29T19:14:48.728+00:00"
+}
+```
+
+## GET metadata for a file
+
+```
+http :8080/files/5f4f4360224725129b139eb0/metadata
+```
+
+Response:
+
+```
+HTTP/1.1 200 OK
+Content-Length: 20
+Content-Type: application/json
+
+{
+    "owner": "Neon Nox"
 }
 ```
 

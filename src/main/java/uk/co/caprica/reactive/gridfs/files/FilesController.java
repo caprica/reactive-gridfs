@@ -15,6 +15,9 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import uk.co.caprica.reactive.gridfs.files.domain.FileId;
+import uk.co.caprica.reactive.gridfs.files.domain.FileInfo;
+import uk.co.caprica.reactive.gridfs.files.domain.FileMetadata;
 
 @RestController
 @RequestMapping("/files")
@@ -31,10 +34,10 @@ public class FilesController {
     }
 
     @PostMapping
-    public Mono<FileId> store(@RequestPart("file") Mono<FilePart> filePart) {
+    public Mono<FileId> store(@RequestPart(value = "data", required = false) FileMetadata metadata, @RequestPart("file") Mono<FilePart> filePart) {
         log.debug("store()");
         return filePart
-            .flatMap(part -> filesService.store(part.content(), part.filename()))
+            .flatMap(part -> filesService.store(metadata, part.content(), part.filename()))
             .map(id -> new FileId(id.toHexString()));
     }
 
@@ -56,5 +59,12 @@ public class FilesController {
     public Mono<Void> delete(@PathVariable("id") String id) {
         log.debug("delete(id={})", id);
         return filesService.delete(id);
+    }
+
+    @GetMapping("{id}/metadata")
+    public Mono<FileMetadata> metadata(@PathVariable("id") String id) {
+        log.debug("metadata(id={})", id);
+        return filesService.metadata(id)
+            .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)));
     }
 }

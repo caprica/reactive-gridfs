@@ -75,6 +75,14 @@ public Mono<FileId> store(@RequestPart(value="data", required=false) FileMetadat
 Here the metadata is optional whereas the upload file itself is mandatory, and this is why those annotations have
 different forms.
 
+The JSON metadata file should match the structure of the `FileMetadata.java` class, for example:
+
+```
+{
+    "owner": "Neon Nox"
+}
+```
+
 ### GET all files
 
 ```
